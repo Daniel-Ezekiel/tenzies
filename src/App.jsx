@@ -1,36 +1,45 @@
 import { useEffect, useState } from "react";
 import Die from "./components/Die";
-// import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
 import "./App.css";
 
 const App = () => {
+  const [dice, setDice] = useState(() => diceInit());
+  const [chosenVal, setChosenVal] = useState(() => "");
+  const [allHeld, setAllHeld] = useState(false);
+
   function diceInit() {
     return Array.from({ length: 10 }).map((_, i) => {
       return { id: i, rollValue: rollDie(), isHeld: false };
     });
   }
 
+  console.log(allHeld);
+
   function rollDie() {
     return Math.ceil(Math.random() * 6);
   }
 
-  const [dice, setDice] = useState(() => diceInit());
-  const [chosenVal, setChosenVal] = useState(() => "");
-  const [allHeld, setAllHeld] = useState(false);
-
   function holdValue(event, id) {
     event.stopPropagation();
-    if (!chosenVal) setChosenVal(dice[id].rollValue);
-    if (dice.every((die) => die.isHeld)) setAllHeld(true);
+    if (!chosenVal) {
+      setChosenVal(dice[id].rollValue);
+      setDice((oldDice) =>
+        oldDice.map((die) => {
+          return id === die.id ? { ...die, isHeld: true } : die;
+        })
+      );
+    } else {
+      setDice((oldDice) =>
+        oldDice.map((die) => {
+          return id === die.id && chosenVal === die.rollValue
+            ? { ...die, isHeld: true }
+            : die;
+        })
+      );
+    }
 
-    setDice((oldDice) =>
-      oldDice.map((die) => {
-        return id === die.id && chosenVal === die.rollValue
-          ? { ...die, isHeld: true }
-          : die;
-      })
-    );
+    if (dice.every((die) => die.isHeld)) setAllHeld(true);
   }
 
   const allDies = dice.map((die) => (
@@ -44,6 +53,7 @@ const App = () => {
   ));
 
   function rollAll() {
+    if (dice.every((die) => die.isHeld)) setAllHeld(true);
     setDice((oldDice) =>
       oldDice.map((die) => {
         return die.isHeld ? die : { ...die, rollValue: rollDie() };
