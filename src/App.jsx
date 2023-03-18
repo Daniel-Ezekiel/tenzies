@@ -14,34 +14,34 @@ const App = () => {
     });
   }
 
-  console.log(allHeld);
-
+  
   function rollDie() {
     return Math.ceil(Math.random() * 6);
   }
-
+  
   function holdValue(event, id) {
     event.stopPropagation();
     if (!chosenVal) {
       setChosenVal(dice[id].rollValue);
       setDice((oldDice) =>
-        oldDice.map((die) => {
-          return id === die.id ? { ...die, isHeld: true } : die;
-        })
+      oldDice.map((die) => {
+        return id === die.id ? { ...die, isHeld: true } : die;
+      })
       );
     } else {
       setDice((oldDice) =>
-        oldDice.map((die) => {
-          return id === die.id && chosenVal === die.rollValue
-            ? { ...die, isHeld: true }
-            : die;
-        })
+      oldDice.map((die) => {
+        return id === die.id && chosenVal === die.rollValue
+        ? { ...die, isHeld: true }
+        : die;
+      })
       );
     }
-
+    
     if (dice.every((die) => die.isHeld)) setAllHeld(true);
   }
-
+  console.log(allHeld);
+  
   const allDies = dice.map((die) => (
     <Die
       key={die.id}
