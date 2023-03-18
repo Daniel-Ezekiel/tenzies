@@ -1,21 +1,36 @@
+import { useEffect, useState } from "react";
 import Die from "./components/Die";
-import { useState } from "react";
+// import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-confetti";
 import "./App.css";
 
 const App = () => {
-  const [dice, setDice] = useState(() =>
-    Array.from({ length: 10 }).map((_, i) => {
+  function diceInit() {
+    return Array.from({ length: 10 }).map((_, i) => {
       return { id: i, rollValue: rollDie(), isHeld: false };
-    })
-  );
+    });
+  }
 
   function rollDie() {
     return Math.ceil(Math.random() * 6);
   }
 
+  const [dice, setDice] = useState(() => diceInit());
+  const [chosenVal, setChosenVal] = useState(() => "");
+  const [allHeld, setAllHeld] = useState(false);
+
   function holdValue(event, id) {
     event.stopPropagation();
-    console.log("Clicked", id);
+    if (!chosenVal) setChosenVal(dice[id].rollValue);
+    if (dice.every((die) => die.isHeld)) setAllHeld(true);
+
+    setDice((oldDice) =>
+      oldDice.map((die) => {
+        return id === die.id && chosenVal === die.rollValue
+          ? { ...die, isHeld: true }
+          : die;
+      })
+    );
   }
 
   const allDies = dice.map((die) => (
@@ -23,13 +38,28 @@ const App = () => {
       key={die.id}
       id={die.id}
       num={die.rollValue}
+      isHeld={die.isHeld}
       handleClick={holdValue}
     />
   ));
-  // console.log(dice);
+
+  function rollAll() {
+    setDice((oldDice) =>
+      oldDice.map((die) => {
+        return die.isHeld ? die : { ...die, rollValue: rollDie() };
+      })
+    );
+  }
+
+  function resetGame() {
+    setDice(diceInit());
+    setChosenVal("");
+    setAllHeld(false);
+  }
 
   return (
     <div className="App">
+      {allHeld && <Confetti />}
       <div className="game--container">
         <h1 className="game--title">Tenzies</h1>
         <p className="game--instructions">
@@ -39,7 +69,12 @@ const App = () => {
 
         <div className="dice--container">{allDies}</div>
 
-        <button className="btn__game-action">Roll</button>
+        <button
+          className="btn__game-action"
+          onClick={!allHeld ? rollAll : resetGame}
+        >
+          {!allHeld ? "Roll" : "Reset Game"}
+        </button>
       </div>
     </div>
   );

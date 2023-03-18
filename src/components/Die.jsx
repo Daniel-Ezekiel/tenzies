@@ -1,7 +1,7 @@
-const Die = ({ id, num, handleClick }) => {
+const Die = ({ id, num, isHeld, handleClick }) => {
   return (
     <div
-      className="die"
+      className={`die ${isHeld && "held"}`}
       onClick={(e) => handleClick(e, id)}
     >
       {num}
