@@ -7,7 +7,7 @@ import "./App.css";
 const App = () => {
   const [dice, setDice] = useState(() => diceInit());
   const [chosenVal, setChosenVal] = useState(() => "");
-  const [allHeld, setAllHeld] = useState(false);
+  const [tenzies, setTenzies] = useState(false);
 
   function diceInit() {
     return Array.from({ length: 10 }).map((_) => ({
@@ -41,7 +41,7 @@ const App = () => {
       );
     }
   }
-  // console.log(allHeld);
+  // console.log(tenzies);
 
   const allDies = dice.map((die) => (
     <Die
@@ -64,17 +64,17 @@ const App = () => {
   function resetGame() {
     setDice(diceInit());
     setChosenVal("");
-    setAllHeld(false);
+    setTenzies(false);
   }
 
   useEffect(() => {
     if (dice.every((die) => die.isHeld && die.rollValue === chosenVal))
-      setAllHeld(true);
+      setTenzies(true);
   }, [dice]);
 
   return (
     <div className="App">
-      {allHeld && <Confetti />}
+      {tenzies && <Confetti />}
       <div className="game--container">
         <h1 className="game--title">Tenzies</h1>
         <p className="game--instructions">
@@ -86,9 +86,9 @@ const App = () => {
 
         <button
           className="btn__game-action"
-          onClick={!allHeld ? rollAll : resetGame}
+          onClick={!tenzies ? rollAll : resetGame}
         >
-          {!allHeld ? "Roll" : "Reset Game"}
+          {!tenzies ? "Roll" : "Reset Game"}
         </button>
       </div>
     </div>
