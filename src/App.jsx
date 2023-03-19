@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { nanoid } from "nanoid";
 import Die from "./components/Die";
 import Confetti from "react-confetti";
 import "./App.css";
@@ -9,39 +10,39 @@ const App = () => {
   const [allHeld, setAllHeld] = useState(false);
 
   function diceInit() {
-    return Array.from({ length: 10 }).map((_, i) => {
-      return { id: i, rollValue: rollDie(), isHeld: false };
-    });
+    return Array.from({ length: 10 }).map((_) => ({
+      id: nanoid(),
+      rollValue: rollDie(),
+      isHeld: false,
+    }));
   }
 
-  
   function rollDie() {
     return Math.ceil(Math.random() * 6);
   }
-  
+
   function holdValue(event, id) {
     event.stopPropagation();
     if (!chosenVal) {
-      setChosenVal(dice[id].rollValue);
+      setChosenVal(+event.target.textContent);
+      // console.log(event);
       setDice((oldDice) =>
-      oldDice.map((die) => {
-        return id === die.id ? { ...die, isHeld: true } : die;
-      })
+        oldDice.map((die) => {
+          return id === die.id ? { ...die, isHeld: true } : die;
+        })
       );
     } else {
       setDice((oldDice) =>
-      oldDice.map((die) => {
-        return id === die.id && chosenVal === die.rollValue
-        ? { ...die, isHeld: true }
-        : die;
-      })
+        oldDice.map((die) => {
+          return id === die.id && chosenVal === die.rollValue
+            ? { ...die, isHeld: true }
+            : die;
+        })
       );
     }
-    
-    if (dice.every((die) => die.isHeld)) setAllHeld(true);
   }
-  console.log(allHeld);
-  
+  // console.log(allHeld);
+
   const allDies = dice.map((die) => (
     <Die
       key={die.id}
@@ -53,7 +54,6 @@ const App = () => {
   ));
 
   function rollAll() {
-    if (dice.every((die) => die.isHeld)) setAllHeld(true);
     setDice((oldDice) =>
       oldDice.map((die) => {
         return die.isHeld ? die : { ...die, rollValue: rollDie() };
@@ -66,6 +66,11 @@ const App = () => {
     setChosenVal("");
     setAllHeld(false);
   }
+
+  useEffect(() => {
+    if (dice.every((die) => die.isHeld && die.rollValue === chosenVal))
+      setAllHeld(true);
+  }, [dice]);
 
   return (
     <div className="App">
