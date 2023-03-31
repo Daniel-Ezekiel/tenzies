@@ -18,10 +18,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  position: relative;
 }
 
 canvas {
   width: 100%;
+}
+
+.best--score {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.7rem;
+}
+
+.current--score {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.7rem;
+}
+
+.best--score,
+.current--score {
+  font-size: 1.4rem;
+}
+
+.best--score span,
+.current--score span {
+  font-size: 1.6rem;
 }
 
 .game--container {
@@ -92,3 +116,4 @@ canvas {
   border-radius: 0.35rem;
   cursor: pointer;
 }
+
