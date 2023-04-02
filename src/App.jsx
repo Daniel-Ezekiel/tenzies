@@ -8,7 +8,7 @@ import "./App.css";
 const App = () => {
   const [scoreVal, setScoreVal] = useState(0);
   const [bestVal, setBestVal] = useState(
-    localStorage.getItem("bestValue") || 0
+    localStorage.getItem("bestScore") || 0
   );
   const [dice, setDice] = useState(() => diceInit());
   const [chosenVal, setChosenVal] = useState(() => "");
@@ -76,8 +76,16 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (dice.every((die) => die.isHeld && die.rollValue === chosenVal))
+    if (dice.every((die) => die.isHeld && die.rollValue === chosenVal)) {
       setTenzies(true);
+      if (bestVal == 0) {
+        setBestVal(scoreVal);
+        localStorage.setItem("bestScore", scoreVal);
+      } else if (scoreVal < Number(bestVal)) {
+        setBestVal(scoreVal);
+        localStorage.setItem("bestScore", scoreVal);
+      }
+    }
   }, [dice]);
 
   return (
